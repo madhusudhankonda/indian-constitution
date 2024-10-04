@@ -28,5 +28,5 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'ndian-constitution-chatbot'
+          app-name: 'indian-constitution-chatbot'
           images: '${{ secrets.AZURE_ACR_SERVER }}/indian-constitution-chatbot:latest'
