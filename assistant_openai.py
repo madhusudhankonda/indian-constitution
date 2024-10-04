@@ -1,17 +1,11 @@
-import time
-from openai import OpenAI
 import streamlit as st
 import logging
+from client_util import get_openai_client
+from client_util import OPENAI_VECTOR_STORE_ID, OPENAI_ASSISTANT_ID
 
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# Access your secrets
-
-OPENAI_ASSISTANT_ID = os.getenv('OPENAI_ASSISTANT_ID')
-OPENAI_VECTOR_STORE_ID= os.getenv('OPENAI_VECTOR_STORE_ID')
 
 # Set up logging for debugging
 logging.basicConfig(level=logging.ERROR)
@@ -19,9 +13,16 @@ logging.basicConfig(level=logging.ERROR)
 st.set_page_config(page_title="Indian Constitution", page_icon=":books:")
 
 # OpenAI client initialization
-client = OpenAI()
-# api_version="2024-05-01-preview"
+try:
+    client = get_openai_client()
+    st.write("OpenAI client successfully initialized!")
+except Exception as e:
+    st.error(f"Error initializing client: {str(e)}")
 
+if "openai_model" not in st.session_state:
+    st.session_state.openai_model = "gpt-4o"
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
 def process_citations(message):
     """Process citations from the message and append footnotes with citations."""
@@ -48,11 +49,6 @@ def process_citations(message):
     # Add citations at the end of the message
     message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
     return message_content.value
-
-if "openai_model" not in st.session_state:
-    st.session_state.openai_model = "gpt-4o"
-if "messages" not in st.session_state:
-    st.session_state.messages = []
 
 # Show existing messages if any...
 for message in st.session_state.messages:
