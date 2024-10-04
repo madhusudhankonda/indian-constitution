@@ -27,8 +27,8 @@ jobs:
       
       - name: Build and push Docker image
         run: |
-          docker build . -t ${{ secrets.AZURE_ACR_SERVER }}/indian-constitution-chatbot:latest
-          docker push ${{ secrets.AZURE_ACR_SERVER }}/indian-constitution-chatbot:latest
+          docker build . -t ${{ secrets.AZURE_ACR_SERVER }}/indian-constitution:latest
+          docker push ${{ secrets.AZURE_ACR_SERVER }}/indian-constitution:latest
 
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
