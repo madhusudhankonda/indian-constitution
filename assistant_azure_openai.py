@@ -31,19 +31,6 @@ st.sidebar.header("Frequently Asked Questions")
 
 with st.sidebar:
 
-    st.header("Menu")
-    menu_options = ["Chat", "Model Settings", "FAQs"]
-    selection = st.radio("Navigate to:", menu_options)
-    
-    if selection == "Chat":
-        st.write("You're in the Chat section.")
-    elif selection == "Model Settings":
-        st.write("You're in the Model Settings section.")
-    elif selection == "FAQs":
-        st.write("You're in the FAQs section.")
-    
-
-
     st.markdown(
         """
     1. What are the fundamental rights provided by the Indian Constitution?
