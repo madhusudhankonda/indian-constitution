@@ -16,8 +16,9 @@ st.set_page_config(
     initial_sidebar_state="expanded")
 
 st.markdown(
-    "<div style='background-color:#1cb3e0;padding:0px;text-align:center;'>"
-    "<h1 style='color:white;'>Indian Constitution Assistant</h1>"
+    "<div style='background-color:#1cb3e0;padding:10px;text-align:center;'>"
+    "<h1 style='color:white;'>Indian Constitution Virtual Assistant</h1>"
+    "<h3 style='color:white;'>AI Chatbot answering your queries on Indian Institution</h3>"
     "</div>",
     unsafe_allow_html=True
 )
