@@ -15,10 +15,35 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded")
 
+st.markdown(
+    "<div style='background-color:#1cb3e0;padding:0px;text-align:center;'>"
+    "<h1 style='color:white;'>Indian Constitution Assistant</h1>"
+    "</div>",
+    unsafe_allow_html=True
+)
+
 st.sidebar.image("indian-constitution-logo.png", width=300)
+
+# Create a two-column layout: 70% for the chat and 30% for model tweaking
+col1, col2 = st.columns([0.7, 0.3])
+
 st.sidebar.header("Frequently Asked Questions")
 
 with st.sidebar:
+
+    st.header("Menu")
+    menu_options = ["Chat", "Model Settings", "FAQs"]
+    selection = st.radio("Navigate to:", menu_options)
+    
+    if selection == "Chat":
+        st.write("You're in the Chat section.")
+    elif selection == "Model Settings":
+        st.write("You're in the Model Settings section.")
+    elif selection == "FAQs":
+        st.write("You're in the FAQs section.")
+    
+
+
     st.markdown(
         """
     1. What are the fundamental rights provided by the Indian Constitution?
@@ -112,9 +137,49 @@ def process_citations(message):
     message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
     return message_content.value
 
+# Model tweaking parameters and language selection in the 30% column
+with col2:
+    st.header("Model Settings")
+
+    language = st.selectbox("Choose the output language:", ["English", "Hindi", "Other"])
+    response_length = st.slider("Response Length:", min_value=50, max_value=500, value=150)
+    temperature = st.selectbox("Model Temperature:", [0.1, 0.3, 0.5, 0.7, 0.9], index=2)
+    use_advanced_mode = st.checkbox("Use Advanced Mode")
+    max_tokens = st.number_input("Max Tokens:", min_value=10, max_value=2048, value=1024)
+
+# Chat interface in the 70% column
+
+def chat_content():
+    st.session_state['contents'].append(st.session_state.content)
+
+# with st.container():
+#     with st.container():
+#         st.chat_input(key='content', on_submit=chat_content) 
+#         button_b_pos = "0rem"
+#         # button_css = float_css_helper(width="2.2rem", bottom=button_b_pos, transition=0)
+#         # float_parent(css=button_css)
+#     if content:=st.session_state.content:
+#         with st.chat_message(name='robot'):
+#             for c in st.session_state.contents:
+#                 st.write(c)
+
+    st.header("Chat with the Indian Constitution Assistant")
+    st.write("This is where the conversation will take place.")
+
 # Chat input for the user
 if prompt := st.chat_input("Ask me!"):
+    params = {
+            "prompt": prompt,
+            "max_tokens": max_tokens if use_advanced_mode else response_length,
+            "temperature": temperature,
+            "stop": None,
+        }
     
+    if language == "Hindi":
+            params["language"] = "hi"
+    elif language == "Other":
+        params["language"] = "es"  # Example for other languages like Spanish
+
     # Create a new chat thread for the conversation
     chat_thread = client.beta.threads.create()
     st.session_state.thread_id = chat_thread.id
