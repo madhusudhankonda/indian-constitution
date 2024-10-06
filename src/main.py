@@ -195,5 +195,5 @@ if prompt := st.chat_input("What do you want to ask me?"):
 
 
 with tab2:
-    st.container().empty()
+    # Hindi version here
     
