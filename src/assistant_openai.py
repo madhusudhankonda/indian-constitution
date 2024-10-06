@@ -1,7 +1,7 @@
 import streamlit as st
 import logging
-from client_util import get_openai_client
-from client_util import OPENAI_VECTOR_STORE_ID, OPENAI_ASSISTANT_ID
+from src.client_util import get_openai_client
+from src.client_util import OPENAI_VECTOR_STORE_ID, OPENAI_ASSISTANT_ID
 
 from dotenv import load_dotenv
 

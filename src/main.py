@@ -9,6 +9,7 @@ load_dotenv()
 # Set up logging for debugging
 logging.basicConfig(level=logging.ERROR)
 
+LANGUAGE = "English"
 st.set_page_config(
     page_title="Indian Constitution", 
     page_icon=":books:",
@@ -23,10 +24,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.image("indian-constitution-logo4.png", width=290)
-
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
 col1, col2, col3 = st.columns([1, 2, 1])
+
+tab1, tab2, tab3, tab4 = st.tabs(["English", "Hindi", "Telugu", "Tamil"])
+
+# ---- SIDEBAR START -------
+
+st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
 
 st.sidebar.header("Frequently Asked Questions")
 
@@ -81,6 +86,9 @@ with st.sidebar:
     st.markdown("Created by [Chocolateminds](https://www.chocolateminds.com/).")
     
     st.markdown("""---""")
+
+# ---- SIDEBAR END -------
+
 # OpenAI client initialization with error handling
 
 try:
@@ -95,10 +103,12 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Show existing messages if any...
-for message in st.session_state.messages:
-    with st.chat_message(message["role"],avatar="./question.png"):
-        st.markdown(message["content"])
+with st.container():
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"],avatar="src/images/answer.png"):
+            st.markdown(message["content"])
 
+# -- PROCESS CITATIONS ---
 def process_citations(message):
     """Process citations from the message and append footnotes with citations."""
     message_content = message.content[0].text
@@ -127,40 +137,9 @@ def process_citations(message):
     message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
     return message_content.value
 
-# Model tweaking parameters and language selection in the 30% column
-
-with col2:
-
-    language = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
-
-
-
-
-with col3:
-    st.header("Model Settings")
-    response_length = st.slider("Response Length:", min_value=50, max_value=500, value=150)
-    temperature = st.selectbox("Model Temperature:", [0.1, 0.3, 0.5, 0.7, 0.9], index=2)
-    use_advanced_mode = st.checkbox("Use Advanced Mode")
-    max_tokens = st.number_input("Max Tokens:", min_value=10, max_value=2048, value=1024)
-
-col1, col2, col3 = st.columns([1, 2, 1])
+# -- CHAT START --
 
 if prompt := st.chat_input("What do you want to ask me?"):
-    params = {
-            "prompt": prompt,
-            "max_tokens": max_tokens if use_advanced_mode else response_length,
-            "temperature": temperature,
-            "stop": None,
-        }
-    
-    if language == "Hindi":
-        params["language"] = "es"
-    elif language == "Telugu":
-        params["language"] = "te" 
-    elif language == "Tamil":
-        params["language"] = "ta"
-    else: 
-        params["language"] = "es"
     
     # Create a new chat thread for the conversation
     chat_thread = client.beta.threads.create()
@@ -168,7 +147,7 @@ if prompt := st.chat_input("What do you want to ask me?"):
 
     # Add the user's message to the state and display it on the screen
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="./answer.png"):
+    with st.chat_message("user", avatar="src/images/question.png"):
         st.markdown(prompt)
 
     # Send the user's message to the thread
@@ -182,13 +161,12 @@ if prompt := st.chat_input("What do you want to ask me?"):
     run = client.beta.threads.runs.create(
         thread_id=st.session_state.thread_id,
         assistant_id=AZURE_OPENAI_ASSISTANT_ID,
-        temperature=temperature,
         instructions=f"""
-        Please answer the questions in {language} and  using only the knowledge provided in the uploaded Indian Constitution PDF file.
+        Please answer the questions in {LANGUAGE} and  using only the knowledge provided in the uploaded Indian Constitution PDF file.
 
         - Include direct quotes from the relevant sections of the document in your answer.
         - Ensure that the 'quote' field in the file_citation includes the exact text from the document.
-        - Provide detailed answers in {language}, with citations at the end.
+        - Provide detailed answers in {LANGUAGE}, with citations at the end.
         - The citations should reference specific articles or sections, including the quoted text.
         """,
     )
@@ -212,5 +190,10 @@ if prompt := st.chat_input("What do you want to ask me?"):
             logging.debug(f"Processing assistant message: {message}")
             full_response = process_citations(message=message)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
-            with st.chat_message("assistant", avatar="./answer.png"):
+            with st.chat_message("assistant", avatar="src/images/answer.png"):
                 st.markdown(full_response, unsafe_allow_html=True)
+
+
+with tab2:
+    st.container().empty()
+    
