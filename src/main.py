@@ -9,12 +9,12 @@ load_dotenv()
 # Set up logging for debugging
 logging.basicConfig(level=logging.ERROR)
 
-LANGUAGE = "English"
 st.set_page_config(
     page_title="Indian Constitution", 
     page_icon=":books:",
     layout="wide",
     initial_sidebar_state="expanded")
+
 
 st.markdown(
     "<div style='background-color:#ebc934;padding:10px;text-align:center;'>"
@@ -28,6 +28,11 @@ st.markdown(
 col1, col2, col3 = st.columns([1, 2, 1])
 
 tab1, tab2, tab3, tab4 = st.tabs(["English", "Hindi", "Telugu", "Tamil"])
+
+LANGUAGE = "English"
+
+LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
+
 
 # ---- SIDEBAR START -------
 
@@ -196,4 +201,4 @@ if prompt := st.chat_input("What do you want to ask me?"):
 
 with tab2:
     # Hindi version here
-    
+    st.write("Hindi - coming soon")
