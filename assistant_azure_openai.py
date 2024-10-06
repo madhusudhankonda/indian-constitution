@@ -23,7 +23,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.image("indian-constitution-logo.png", width=300)
+st.sidebar.image("indian-constitution-logo4.png", width=290)
 
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
 col1, col2, col3 = st.columns([1, 2, 1])
@@ -145,97 +145,72 @@ with col3:
 
 col1, col2, col3 = st.columns([1, 2, 1])
 
+if prompt := st.chat_input("What do you want to ask me?"):
+    params = {
+            "prompt": prompt,
+            "max_tokens": max_tokens if use_advanced_mode else response_length,
+            "temperature": temperature,
+            "stop": None,
+        }
+    
+    if language == "Hindi":
+        params["language"] = "es"
+    elif language == "Telugu":
+        params["language"] = "te" 
+    elif language == "Tamil":
+        params["language"] = "ta"
+    else: 
+        params["language"] = "es"
+    
+    # Create a new chat thread for the conversation
+    chat_thread = client.beta.threads.create()
+    st.session_state.thread_id = chat_thread.id
 
+    # Add the user's message to the state and display it on the screen
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user", avatar="./answer.png"):
+        st.markdown(prompt)
 
+    # Send the user's message to the thread
+    client.beta.threads.messages.create(
+        thread_id=st.session_state.thread_id, 
+        role="user", 
+        content=prompt
+    )
 
-if prompt := st.chat_input("Ask me!"):
-            params = {
-                    "prompt": prompt,
-                    "max_tokens": max_tokens if use_advanced_mode else response_length,
-                    "temperature": temperature,
-                    "stop": None,
-                }
-            # no use right now
-            if language == "Hindi":
-                params["language"] = "es"
-            elif language == "Telugu":
-                params["language"] = "te" 
-            elif language == "Tamil":
-                params["language"] = "ta"
-            else: 
-                 params["language"] = "es"
-            # Create a new chat thread for the conversation
-            chat_thread = client.beta.threads.create()
-            st.session_state.thread_id = chat_thread.id
+    # Create a run with specific instructions to provide detailed answers with citations
+    run = client.beta.threads.runs.create(
+        thread_id=st.session_state.thread_id,
+        assistant_id=AZURE_OPENAI_ASSISTANT_ID,
+        temperature=temperature,
+        instructions=f"""
+        Please answer the questions in {language} and  using only the knowledge provided in the uploaded Indian Constitution PDF file.
 
-            # Add the user's message to the state and display it on the screen
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user", avatar="./question.png"):
-                st.markdown(prompt)
-
-            # Send the user's message to the thread
-            client.beta.threads.messages.create(
-                thread_id=st.session_state.thread_id, 
-                role="user", 
-                content=prompt
+        - Include direct quotes from the relevant sections of the document in your answer.
+        - Ensure that the 'quote' field in the file_citation includes the exact text from the document.
+        - Provide detailed answers in {language}, with citations at the end.
+        - The citations should reference specific articles or sections, including the quoted text.
+        """,
+    )
+    print(run)
+    # Show a spinner while the assistant is generating the response
+    with st.spinner("Generating response..."):
+        while run.status != "completed":
+            run = client.beta.threads.runs.retrieve(
+                thread_id=st.session_state.thread_id, run_id=run.id
             )
 
-            # Create a run with specific instructions to provide detailed answers with citations
-            run = client.beta.threads.runs.create(
-                thread_id=st.session_state.thread_id,
-                assistant_id=AZURE_OPENAI_ASSISTANT_ID,
-                temperature=temperature,
-                instructions=f"""
-                Please answer the questions in {language} and  using only the knowledge provided in the uploaded Indian Constitution PDF file.
+        # Retrieve the messages added by the assistant
+        messages = client.beta.threads.messages.list(thread_id=st.session_state.thread_id)
 
-                - Include direct quotes from the relevant sections of the document in your answer.
-                - Ensure that the 'quote' field in the file_citation includes the exact text from the document.
-                - Provide detailed answers in {language}, with citations at the end.
-                - The citations should reference specific articles or sections, including the quoted text.
-                """,
-            )
-            print(run)
-            # Show a spinner while the assistant is generating the response
-            with st.spinner("Generating response..."):
-                while run.status != "completed":
-                    run = client.beta.threads.runs.retrieve(
-                        thread_id=st.session_state.thread_id, run_id=run.id
-                    )
+        # Process and display assistant messages
+        assistant_messages_for_run = [
+            message for message in messages if message.run_id == run.id and message.role == "assistant"
+        ]
 
-                # Retrieve the messages added by the assistant
-                messages = client.beta.threads.messages.list(thread_id=st.session_state.thread_id)
-
-                # Process and display assistant messages
-                assistant_messages_for_run = [
-                    message for message in messages if message.run_id == run.id and message.role == "assistant"
-                ]
-
-                for message in assistant_messages_for_run:
-                    logging.debug(f"Processing assistant message: {message}")
-                    full_response = process_citations(message=message)
-                    st.session_state.messages.append({"role": "assistant", "content": full_response})
-                    with st.chat_message("assistant", avatar="./answer.png"):
-                        st.markdown(full_response, unsafe_allow_html=True)
-
-
-
-# Chat interface in the 70% column
-
-def chat_content():
-    st.session_state['contents'].append(st.session_state.content)
-
-# with st.container():
-#     with st.container():
-#         st.chat_input(key='content', on_submit=chat_content) 
-#         button_b_pos = "0rem"
-#         # button_css = float_css_helper(width="2.2rem", bottom=button_b_pos, transition=0)
-#         # float_parent(css=button_css)
-#     if content:=st.session_state.content:
-#         with st.chat_message(name='robot'):
-#             for c in st.session_state.contents:
-#                 st.write(c)
-
-    st.header("Chat with the Indian Constitution Assistant")
-    st.write("This is where the conversation will take place.")
-
-# Chat input for the user
+        for message in assistant_messages_for_run:
+            logging.debug(f"Processing assistant message: {message}")
+            full_response = process_citations(message=message)
+            st.session_state.messages.append({"role": "assistant", "content": full_response})
+            with st.chat_message("assistant", avatar="./answer.png"):
+                st.markdown(full_response, unsafe_allow_html=True)
