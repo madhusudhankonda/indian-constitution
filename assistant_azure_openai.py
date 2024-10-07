@@ -111,7 +111,12 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"],avatar="./question.png"):
         st.markdown(message["content"])
 
-def process_citations(message):
+
+
+
+
+
+def process_citations(message, language):
     """Process citations from the message and append footnotes with citations."""
     message_content = message.content[0].text
     annotations = message_content.annotations
@@ -128,7 +133,13 @@ def process_citations(message):
 
         # Gather citation details
         if (file_citation := getattr(annotation, 'file_citation', None)):
-            cited_file = client.files.retrieve(file_citation.file_id)
+            if language == "English":
+                cited_file = client.files.retrieve('assistant-p3uJKhxDn1iAEAmHk8xXlfEU')
+            elif language == "Telugu":
+                cited_file = client.files.retrieve('assistant-OgN1ZQeGPqdxtPs90x8pzAsy')
+            else:
+                cited_file = client.files.retrieve('assistant-JGbnns9fgvw5ndWzZ8AuLXet')
+            print("file citation",cited_file)
             quote_text = getattr(file_citation, 'quote', None) or \
                             getattr(file_citation, 'text', None) or\
                             'Citation'
@@ -144,8 +155,6 @@ def process_citations(message):
 with col2:
 
     language = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
-
-
 
 
 with col3:
@@ -198,12 +207,12 @@ if prompt := st.chat_input("Ask me!"):
                 assistant_id=AZURE_OPENAI_ASSISTANT_ID,
                 temperature=temperature,
                 instructions=f"""
-                Please answer the questions in {language} and  using only the knowledge provided in the uploaded Indian Constitution PDF file.
+                Please answer the questions in {language} and  using only the knowledge provided in the uploaded ic-hindi PDF file.
 
                 - Include direct quotes from the relevant sections of the document in your answer.
                 - Ensure that the 'quote' field in the file_citation includes the exact text from the document.
                 - Provide detailed answers in {language}, with citations at the end.
-                - The citations should reference specific articles or sections, including the quoted text.
+                - The citations should reference specific articles or sections, including the quoted text and should be in the language of the text.
                 """,
             )
             print(run)
@@ -224,7 +233,7 @@ if prompt := st.chat_input("Ask me!"):
 
                 for message in assistant_messages_for_run:
                     logging.debug(f"Processing assistant message: {message}")
-                    full_response = process_citations(message=message)
+                    full_response = process_citations(message=message, language=language)
                     st.session_state.messages.append({"role": "assistant", "content": full_response})
                     with st.chat_message("assistant", avatar="./answer.png"):
                         st.markdown(full_response, unsafe_allow_html=True)
