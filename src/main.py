@@ -4,7 +4,7 @@ import logging
 from client_util import get_azure_openai_client
 from client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
-
+from common_settings import set_page_container_style
 load_dotenv()
 
 # Set up logging for debugging
@@ -16,13 +16,29 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded")
 
+set_page_container_style(
+        max_width = 1100, max_width_100_percent = True,
+        padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 10
+)
 st.markdown(
     "<div style='background-color:#fc9d03;padding:5px;text-align:center;'>"
     "<h1 style='color:white;'>Indian Constitution Chatbot</h1>"
     "</div>",
     unsafe_allow_html=True
 )
+st.info(
 
+    """
+    **An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!**
+    """)
+
+def about():
+    st.sidebar.markdown('---')
+    st.sidebar.info('''
+    ### Indian Constitution 
+    #### by chocolateminds.com
+
+    Updated: 09 October 2024''')
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
 col1, col2, col3 = st.columns([1, 2, 1])
 
@@ -196,3 +212,7 @@ if prompt := st.chat_input("What do you want to ask me?"):
             st.session_state.messages.append({"role": "assistant", "content": full_response})
             with st.chat_message("assistant", avatar="src/images/answer.png"):
                 st.markdown(full_response, unsafe_allow_html=True)
+
+
+if __name__ == '__main__':
+    about()
