@@ -17,9 +17,8 @@ st.set_page_config(
     initial_sidebar_state="expanded")
 
 st.markdown(
-    "<div style='background-color:#fc9d03;padding:10px;text-align:center;'>"
-    "<h1 style='color:white;'>Indian Constitution Virtual Assistant</h1>"
-    "<h3 style='color:white;'>AI Chatbot answering your queries on Indian Institution</h3>"
+    "<div style='background-color:#fc9d03;padding:5px;text-align:center;'>"
+    "<h1 style='color:white;'>Indian Constitution Chatbot</h1>"
     "</div>",
     unsafe_allow_html=True
 )
@@ -29,7 +28,9 @@ col1, col2, col3 = st.columns([1, 2, 1])
 
 LANGUAGE = "English"
 
-LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
+with col3: 
+    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
+
 
 
 # ---- SIDEBAR START -------
