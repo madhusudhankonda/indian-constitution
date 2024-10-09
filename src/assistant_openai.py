@@ -10,7 +10,7 @@ load_dotenv()
 # Set up logging for debugging
 logging.basicConfig(level=logging.ERROR)
 
-st.set_page_config(page_title="Indian Constitution", page_icon=":books:")
+# st.set_page_config(page_title="Indian Constitution", page_icon=":books:")
 
 # OpenAI client initialization
 try:

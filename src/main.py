@@ -1,11 +1,9 @@
 import streamlit as st
+import os
 import logging
 from client_util import get_azure_openai_client
 from client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
-from audio_recorder_streamlit import audio_recorder
-
-audio_bytes = audio_recorder()
 
 load_dotenv()
 
@@ -18,7 +16,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded")
 
-
 st.markdown(
     "<div style='background-color:#ebc934;padding:10px;text-align:center;'>"
     "<h1 style='color:white;'>Indian Constitution Virtual Assistant</h1>"
@@ -29,8 +26,6 @@ st.markdown(
 
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
 col1, col2, col3 = st.columns([1, 2, 1])
-
-tab1, tab2, tab3, tab4 = st.tabs(["English", "Hindi", "Telugu", "Tamil"])
 
 LANGUAGE = "English"
 
@@ -202,8 +197,3 @@ if prompt := st.chat_input("What do you want to ask me?"):
             st.session_state.messages.append({"role": "assistant", "content": full_response})
             with st.chat_message("assistant", avatar="src/images/answer.png"):
                 st.markdown(full_response, unsafe_allow_html=True)
-
-
-with tab2:
-    # Hindi version here
-    st.write("Hindi - coming soon")
