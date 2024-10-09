@@ -3,6 +3,9 @@ import logging
 from client_util import get_azure_openai_client
 from client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
+from audio_recorder_streamlit import audio_recorder
+
+audio_bytes = audio_recorder()
 
 load_dotenv()
 
@@ -167,8 +170,10 @@ if prompt := st.chat_input("What do you want to ask me?"):
         thread_id=st.session_state.thread_id,
         assistant_id=AZURE_OPENAI_ASSISTANT_ID,
         instructions=f"""
-        Please answer the questions in {LANGUAGE} and  using only the knowledge provided in the uploaded Indian Constitution PDF file.
+        Please answer the questions in {LANGUAGE} and  using only the knowledge provided in the uploaded Indian Constitution PDF files.
 
+        - There is a file for each of the language in vector store - you must consult the respective file. 
+        For example, if the LANGUAGE is telugu, you must retrieve answers from ic-telugu.pdf file a
         - Include direct quotes from the relevant sections of the document in your answer.
         - Ensure that the 'quote' field in the file_citation includes the exact text from the document.
         - Provide detailed answers in {LANGUAGE}, with citations at the end.
