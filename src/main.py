@@ -4,7 +4,7 @@ import logging
 from client_util import get_azure_openai_client
 from client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
-
+from common_settings import set_page_container_style
 load_dotenv()
 
 # Set up logging for debugging
@@ -16,20 +16,37 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded")
 
+set_page_container_style(
+        max_width = 1100, max_width_100_percent = True,
+        padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 10
+)
 st.markdown(
-    "<div style='background-color:#ebc934;padding:10px;text-align:center;'>"
-    "<h1 style='color:white;'>Indian Constitution Virtual Assistant</h1>"
-    "<h3 style='color:white;'>AI Chatbot answering your queries on Indian Institution</h3>"
+    "<div style='background-color:#fc9d03;padding:5px;text-align:center;'>"
+    "<h1 style='color:white;'>Indian Constitution Chatbot</h1>"
     "</div>",
     unsafe_allow_html=True
 )
+st.info(
 
+    """
+    **An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!**
+    """)
+
+def about():
+    st.sidebar.markdown('---')
+    st.sidebar.info('''
+    ### Indian Constitution 
+    #### by chocolateminds.com
+
+    Updated: 09 October 2024''')
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
 col1, col2, col3 = st.columns([1, 2, 1])
 
 LANGUAGE = "English"
 
-LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
+with col3: 
+    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
+
 
 
 # ---- SIDEBAR START -------
@@ -39,56 +56,54 @@ st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
 st.sidebar.header("Frequently Asked Questions")
 
 with st.sidebar:
+    with st.expander("Frequently Asked Questions"):
+        st.markdown(
+            """
+        1. What are the fundamental rights provided by the Indian Constitution?
 
-    st.markdown(
+        2. What is the Preamble to the Indian Constitution, and what does it signify?
+
+        3. How does the Indian Constitution define the territories of India?
+
+        4. What provisions does the Indian Constitution make regarding citizenship?
+
+        5. What are the Directive Principles of State Policy in the Indian Constitution?
+
+        6. What is the amendment process in the Indian Constitution?
+
+        7. How is the President of India elected, and what are the President's powers and duties?
+
+        8. What are the emergency provisions stated in the Indian Constitution?
+
+        9. What is the significance of the Ninth Schedule in the Indian Constitution?
+
+        10. How are the states formed or reorganized under the Indian Constitution?
         """
-    1. What are the fundamental rights provided by the Indian Constitution?
-
-    2. What is the Preamble to the Indian Constitution, and what does it signify?
-
-    3. How does the Indian Constitution define the territories of India?
-
-    4. What provisions does the Indian Constitution make regarding citizenship?
-
-    5. What are the Directive Principles of State Policy in the Indian Constitution?
-
-    6. What is the amendment process in the Indian Constitution?
-
-    7. How is the President of India elected, and what are the President's powers and duties?
-
-    8. What are the emergency provisions stated in the Indian Constitution?
-
-    9. What is the significance of the Ninth Schedule in the Indian Constitution?
-
-    10. How are the states formed or reorganized under the Indian Constitution?
-    """
-    )
-    st.sidebar.markdown("""---""")
+        )
 
 st.sidebar.header("How to use?")
 
 with st.sidebar:
-    st.markdown(
-        """
-        Below is an example application description that you can use to test Indian Constitution Virtual Assistant.
-        Input the question in the chat box in the main page, towards the bottom of the page. 
-        
-        After writing the query, click the send button and await for reply from the virtual assistant.
-        """
+    with st.container(border=1):
+        st.markdown(
+            """
+            Input the question in the chat box in the main page, towards the bottom of the page. 
+            
+            After writing the query, click the send button and await for reply from the virtual assistant.
+            """
 
-    )
-    
-    st.markdown("""---""")
+        )
 
 st.sidebar.header("About")
 
 with st.sidebar:
-    st.markdown(
-        "Welcome to Indian Constitution ChatBot, an AI-powered Virtual Assistant designed to help you understand, quiz, query Indian Constitution."
-    )
-    st.markdown("Created by [Chocolateminds](https://www.chocolateminds.com/).")
+    with st.container(border=1):
+        st.markdown(
+            "Welcome to Indian Constitution ChatBot, an AI-powered Virtual Assistant designed to help you understand, quiz, query Indian Constitution."
+        )
+        st.markdown("Created by [Chocolateminds](https://www.chocolateminds.com/).")
+        
     
-    st.markdown("""---""")
 
 # ---- SIDEBAR END -------
 
@@ -197,3 +212,7 @@ if prompt := st.chat_input("What do you want to ask me?"):
             st.session_state.messages.append({"role": "assistant", "content": full_response})
             with st.chat_message("assistant", avatar="src/images/answer.png"):
                 st.markdown(full_response, unsafe_allow_html=True)
+
+
+if __name__ == '__main__':
+    about()
