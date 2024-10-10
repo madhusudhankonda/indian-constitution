@@ -22,6 +22,6 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8501
+EXPOSE 5000
 
-ENTRYPOINT ["streamlit", "run", "main.py", "--server.port=8501"]
+ENTRYPOINT ["streamlit", "run", "main.py", "--server.port=5000", "--server.address=0.0.0.0"]
