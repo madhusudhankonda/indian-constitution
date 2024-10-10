@@ -24,4 +24,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8501
 
-ENTRYPOINT ["streamlit", "run", "assistan_openai.py", "--server.port=8501"]
+ENTRYPOINT ["streamlit", "run", "main.py", "--server.port=8501"]

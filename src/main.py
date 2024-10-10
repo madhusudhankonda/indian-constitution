@@ -40,11 +40,11 @@ def about():
 
     Updated: 09 October 2024''')
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
-col1, col2, col3 = st.columns([1, 2, 1])
+col1, col2 = st.columns([2, 1])
 
 LANGUAGE = "English"
 
-with col3: 
+with col2: 
     LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
 
 
@@ -158,7 +158,7 @@ def process_citations(message):
 # -- CHAT START --
 
 if prompt := st.chat_input("What do you want to ask me?"):
-    
+
     # Create a new chat thread for the conversation
     chat_thread = client.beta.threads.create()
     st.session_state.thread_id = chat_thread.id
