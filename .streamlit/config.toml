@@ -3,7 +3,7 @@ primaryColor="#ffa07a"
 backgroundColor="#faeae1"
 secondaryBackgroundColor="#cccccc"
 textColor="#4a4a4a"
-font="monospace"
+font="san serif"
 
 [logger]
 level = "info"
