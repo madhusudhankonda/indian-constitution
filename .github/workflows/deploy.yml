@@ -38,7 +38,7 @@ jobs:
 
       - name: Set environment variables for Azure WebApp
         run: |
-          az webapp config appsettings set --name 'indian-constitution' --resource-group 'rg-cm-ai-apps' --settings AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}
+          az webapp config appsettings set --name 'indian-constitution' --resource-group 'indian-constitution_group' --settings AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}
         env:
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
