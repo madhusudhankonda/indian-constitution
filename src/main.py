@@ -36,27 +36,27 @@ def about():
     st.sidebar.markdown('---')
     st.sidebar.info('''
     ### Indian Constitution 
-    #### by chocolateminds.com
+    #### by https://chocolateminds.com
 
     Updated: 09 October 2024''')
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
-col1, col2 = st.columns([2, 1])
+col1, col2 = st.columns([4, 1])
 
 LANGUAGE = "English"
-
-with col2: 
-    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
-
 
 
 # ---- SIDEBAR START -------
 
 st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
 
+with st.sidebar:
+    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"])
+
 st.sidebar.header("Frequently Asked Questions")
 
 with st.sidebar:
-    with st.expander("Frequently Asked Questions"):
+    
+    with st.expander("Frequently Asked Questions", expanded=True, icon=":material/help:"):
         st.markdown(
             """
         1. What are the fundamental rights provided by the Indian Constitution?
@@ -152,7 +152,7 @@ def process_citations(message):
             logging.debug(f"Citation added: {quote_text} from {cited_file.filename}")
 
     # Add citations at the end of the message
-    message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
+    # message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
     return message_content.value
 
 # -- CHAT START --
