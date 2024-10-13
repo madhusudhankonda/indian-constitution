@@ -21,15 +21,15 @@ set_page_container_style(
         padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 10
 )
 st.markdown(
-    "<div style='background-color:#fc9d03;padding:5px;text-align:center;'>"
-    "<h1 style='color:white;'>Indian Constitution Chatbot</h1>"
+    "<div style='background-color:#fee8d6;padding:1px;text-align:center;'>"
+    "<h2 style='color:orange;'>Indian Constitution Chatbot</h2>"
     "</div>",
     unsafe_allow_html=True
 )
 st.info(
 
     """
-    **An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!**
+    An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!
     """)
 
 def about():
@@ -56,7 +56,7 @@ st.sidebar.header("Frequently Asked Questions")
 
 with st.sidebar:
     
-    with st.expander("Frequently Asked Questions", expanded=True, icon=":material/help:"):
+    with st.expander("Frequently Asked Questions", expanded=False, icon=":material/help:"):
         st.markdown(
             """
         1. What are the fundamental rights provided by the Indian Constitution?
