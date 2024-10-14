@@ -14,7 +14,6 @@ AZURE_OPENAI_ASSISTANT_ID = os.getenv('AZURE_OPENAI_ASSISTANT_ID')
 
 
 def get_azure_openai_client():
-    print(">>> AZURE_OPENAI_ENDPOINT", AZURE_OPENAI_ENDPOINT)
     if not AZURE_OPENAI_API_KEY or not AZURE_OPENAI_ENDPOINT:
         logging.error("Azure OpenAI API Key or Endpoint not set")
         return None
