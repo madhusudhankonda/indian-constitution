@@ -21,16 +21,18 @@ set_page_container_style(
         padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 10
 )
 st.markdown(
-    "<div style='background-color:#fee8d6;padding:1px;text-align:center;'>"
-    "<h2 style='color:orange;'>Indian Constitution Chatbot</h2>"
+    "<div style='background-color:#fee8d6;padding:0px;text-align:center;'>"
+    "<h1 style='color:black'>Indian Constitution Chatbot</h1>"
+    
+    ""
     "</div>",
     unsafe_allow_html=True
 )
-st.info(
+# st.info(
 
-    """
-    An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!
-    """)
+#     """
+#     An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!
+#     """)
 
 def about():
     st.sidebar.markdown('---')
