@@ -4,7 +4,7 @@ import logging
 from client_util import get_azure_openai_client
 from client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
-from common_settings import set_page_container_style
+from common_settings import set_page_container_style, hide_streamlit_header_footer
 load_dotenv()
 
 # Set up logging for debugging
@@ -18,45 +18,45 @@ st.set_page_config(
 
 set_page_container_style(
         max_width = 1100, max_width_100_percent = True,
-        padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 10
+        padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 5
 )
+
+st.markdown(hide_streamlit_header_footer(), unsafe_allow_html=True)
 st.markdown(
-    "<div style='background-color:#fc9d03;padding:5px;text-align:center;'>"
-    "<h1 style='color:white;'>Indian Constitution Chatbot</h1>"
+    "<div style='background-color:#fee8d6;padding:0px;text-align:center;'>"
+    "<h1 style='color:black'>Indian Constitution Chatbot</h1>"
+    ""
     "</div>",
     unsafe_allow_html=True
 )
-st.info(
 
-    """
-    **An intelligent AI chatbot for querying, studying, referring and understanding Indian Constitution, its articles, rights, and historical significance!**
-    """)
+st.markdown(f'<p style="color:navy-blue;font-size:22px;text-align:center">{"An AI assistant for querying, interpreting and understanding the Indian Constitution"}', unsafe_allow_html=True)
 
 def about():
     st.sidebar.markdown('---')
     st.sidebar.info('''
     ### Indian Constitution 
-    #### by chocolateminds.com
+    #### by https://chocolateminds.com
 
     Updated: 09 October 2024''')
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
-col1, col2, col3 = st.columns([1, 2, 1])
+col1, col2 = st.columns([4, 1])
 
 LANGUAGE = "English"
-
-with col3: 
-    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil"])
-
 
 
 # ---- SIDEBAR START -------
 
 st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
 
+with st.sidebar:
+    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"])
+
 st.sidebar.header("Frequently Asked Questions")
 
 with st.sidebar:
-    with st.expander("Frequently Asked Questions"):
+    
+    with st.expander("Frequently Asked Questions", expanded=False, icon=":material/help:"):
         st.markdown(
             """
         1. What are the fundamental rights provided by the Indian Constitution?
@@ -152,13 +152,13 @@ def process_citations(message):
             logging.debug(f"Citation added: {quote_text} from {cited_file.filename}")
 
     # Add citations at the end of the message
-    message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
+    # message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
     return message_content.value
 
 # -- CHAT START --
 
 if prompt := st.chat_input("What do you want to ask me?"):
-    
+
     # Create a new chat thread for the conversation
     chat_thread = client.beta.threads.create()
     st.session_state.thread_id = chat_thread.id
@@ -192,7 +192,7 @@ if prompt := st.chat_input("What do you want to ask me?"):
     )
     print(run)
     # Show a spinner while the assistant is generating the response
-    with st.spinner("Generating response..."):
+    with st.spinner("Thinking.."):
         while run.status != "completed":
             run = client.beta.threads.runs.retrieve(
                 thread_id=st.session_state.thread_id, run_id=run.id
@@ -216,3 +216,4 @@ if prompt := st.chat_input("What do you want to ask me?"):
 
 if __name__ == '__main__':
     about()
+    

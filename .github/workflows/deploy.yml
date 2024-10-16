@@ -35,3 +35,12 @@ jobs:
         with:
           app-name: 'indian-constitution'
           images: '${{ secrets.AZURE_ACR_SERVER }}/indian-constitution:latest'
+
+      - name: Set environment variables for Azure WebApp
+        run: |
+          az webapp config appsettings set --name 'indian-constitution' --resource-group 'indian-constitution_group' --settings AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }} AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }} AZURE_OPENAI_ASSISTANT_ID=${{ secrets.AZURE_OPENAI_ASSISTANT_ID }}
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
