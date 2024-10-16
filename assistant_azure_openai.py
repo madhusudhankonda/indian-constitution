@@ -1,7 +1,7 @@
 import streamlit as st
 import logging
-from client_util import get_azure_openai_client
-from client_util import AZURE_OPENAI_ASSISTANT_ID
+from src.client_util import get_azure_openai_client
+from src.client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -22,7 +22,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.image("indian-constitution-logo.png", width=300)
+st.sidebar.image("src\images\indian-constitution-logo.png", width=300)
 
 # Create a two-column layout: 70% for the chat and 30% for model tweaking
 col1, col2, col3 = st.columns([1, 2, 1])
@@ -108,7 +108,7 @@ if "messages" not in st.session_state:
 
 # Show existing messages if any...
 for message in st.session_state.messages:
-    with st.chat_message(message["role"],avatar="./question.png"):
+    with st.chat_message(message["role"],avatar="src\images\question.png"):
         st.markdown(message["content"])
 
 
@@ -147,8 +147,9 @@ def process_citations(message, language):
             logging.debug(f"Citation added: {quote_text} from {cited_file.filename}")
 
     # Add citations at the end of the message
-    message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
+    # message_content.value += '\n\n**Citations:**\n' + '\n'.join(citations)
     return message_content.value
+
 
 # Model tweaking parameters and language selection in the 30% column
 
@@ -164,7 +165,7 @@ with col3:
     use_advanced_mode = st.checkbox("Use Advanced Mode")
     max_tokens = st.number_input("Max Tokens:", min_value=10, max_value=2048, value=1024)
 
-col1, col2, col3 = st.columns([1, 2, 1])
+# col1, col2, col3 = st.columns([1, 2, 1])
 
 
 
@@ -191,7 +192,7 @@ if prompt := st.chat_input("Ask me!"):
 
             # Add the user's message to the state and display it on the screen
             st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user", avatar="./question.png"):
+            with st.chat_message("user", avatar="src\images\question.png"):
                 st.markdown(prompt)
 
             # Send the user's message to the thread
@@ -207,12 +208,20 @@ if prompt := st.chat_input("Ask me!"):
                 assistant_id=AZURE_OPENAI_ASSISTANT_ID,
                 temperature=temperature,
                 instructions=f"""
-                Please answer the questions in {language} and  using only the knowledge provided in the uploaded ic-hindi PDF file.
+Please answer the questions in {language} using only the knowledge provided in the uploaded ic-hindi PDF file.
 
-                - Include direct quotes from the relevant sections of the document in your answer.
-                - Ensure that the 'quote' field in the file_citation includes the exact text from the document.
-                - Provide detailed answers in {language}, with citations at the end.
-                - The citations should reference specific articles or sections, including the quoted text and should be in the language of the text.
+- Include direct quotes from the relevant sections of the document in your answer.
+- Ensure that the 'quote' field in the file_citation includes the exact text from the document.
+- Provide detailed answers in {language}, with citations at the end.
+- Please answer the questions using the provided document. Include specific citations in APA format with page numbers and paragraph numbers.
+  - Format in-text citations like this: (Author, Year, p. X, para. Y)
+  - Example: (Indian Constitution, 2020, p. 15, para. 4)
+  
+- Provide a full reference at the end, formatted like this:
+  - Author(s). (Year). *Title of Document*. Publisher. Page number and paragraph number.
+  - Example: Government of India. (2020). *The Constitution of India*. Ministry of Law and Justice, p. 15, para. 4.
+
+Please use the page and paragraph numbers from the document when quoting.
                 """,
             )
             print(run)
@@ -235,7 +244,7 @@ if prompt := st.chat_input("Ask me!"):
                     logging.debug(f"Processing assistant message: {message}")
                     full_response = process_citations(message=message, language=language)
                     st.session_state.messages.append({"role": "assistant", "content": full_response})
-                    with st.chat_message("assistant", avatar="./answer.png"):
+                    with st.chat_message("assistant", avatar="src/images/answer.png"):
                         st.markdown(full_response, unsafe_allow_html=True)
 
 
