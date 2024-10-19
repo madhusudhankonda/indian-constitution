@@ -24,13 +24,13 @@ set_page_container_style(
 st.markdown(hide_streamlit_header_footer(), unsafe_allow_html=True)
 st.markdown(
     "<div style='background-color:#fee8d6;padding:0px;text-align:center;'>"
-    "<h1 style='color:black'>Indian Constitution Chatbot</h1>"
+    "<h1 style='color:black'>Indian Constitution And Amendment Acts Chatbot</h1>"
     ""
     "</div>",
     unsafe_allow_html=True
 )
 
-st.markdown(f'<p style="color:navy-blue;font-size:22px;text-align:center">{"An AI assistant for querying, interpreting and understanding the Indian Constitution"}', unsafe_allow_html=True)
+st.markdown(f'<p style="color:white;background:teal;font-size:22px;text-align:center;text-centre:left">{"An AI assistant for querying, interpreting and understanding the Indian Constitution and Amendment Acts"}', unsafe_allow_html=True)
 
 def about():
     st.sidebar.markdown('---')
