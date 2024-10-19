@@ -24,7 +24,7 @@ set_page_container_style(
 st.markdown(hide_streamlit_header_footer(), unsafe_allow_html=True)
 st.markdown(
     "<div style='background-color:#fee8d6;padding:0px;text-align:center;'>"
-    "<h1 style='color:black'>Indian Constitution And Amendment Acts Chatbot</h1>"
+    "<h1 style='color:black'>Indian Constitution & Amendment Acts<br> AI Chatbot</h1>"
     ""
     "</div>",
     unsafe_allow_html=True
