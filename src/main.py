@@ -50,7 +50,8 @@ LANGUAGE = "English"
 st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
 st.sidebar.header("Choose the output language:")
 with st.sidebar:
-    LANGUAGE = st.selectbox("options", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"],label_visibility = "collapsed")
+    with st.container(border=True):
+        LANGUAGE = st.selectbox("options", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"],label_visibility = "collapsed")
 
 st.sidebar.header("FAQ on Indian Constitution")
 
@@ -84,7 +85,6 @@ def display_faq(faq_list, prefix):
     for question in faq_list:
         if st.button(question, key=f"{prefix}_{question}"):
             st.session_state.faq_question = question
-
 
 with st.sidebar:
     with st.expander("FAQ on Indian Constitution", expanded=False):
