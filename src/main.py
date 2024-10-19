@@ -233,5 +233,13 @@ if prompt := st.chat_input("What do you want to ask me?"):
         st.markdown(prompt)
     generate_response(prompt)
 
+# Add disclaimer at the bottom of the page
+with st.sidebar:
+    st.sidebar.markdown(
+    "<div style='background-color:#f8d7da;padding:10px;border-radius:5px;margin-top:20px;'>"
+    "<p style='color:#721c24;'>Disclaimer: This AI chatbot is for informational purposes only and should not be considered as legal advice. Always consult a legal expert for professional advice.</p>"
+    "</div>",
+    unsafe_allow_html=True
+)
 if __name__ == '__main__':
     about()
