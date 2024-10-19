@@ -48,9 +48,9 @@ LANGUAGE = "English"
 # ---- SIDEBAR START -------
 
 st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
-
+st.sidebar.header("Choose the output language:")
 with st.sidebar:
-    LANGUAGE = st.selectbox("Choose the output language:", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"])
+    LANGUAGE = st.selectbox("options", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"],label_visibility = "collapsed")
 
 st.sidebar.header("FAQ on Indian Constitution")
 
