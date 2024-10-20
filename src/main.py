@@ -5,6 +5,7 @@ from client_util import get_azure_openai_client
 from client_util import AZURE_OPENAI_ASSISTANT_ID
 from dotenv import load_dotenv
 from common_settings import set_page_container_style, hide_streamlit_header_footer
+import base64
 load_dotenv()
 
 # Set up logging for debugging
@@ -15,6 +16,68 @@ st.set_page_config(
     page_icon=":books:",
     layout="wide",
     initial_sidebar_state="expanded")
+# Function to set background from a local file
+
+def get_img_as_base64(file):
+    with open(file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Encode the background and sidebar images
+bg_img = get_img_as_base64("src/images/BG.png")  # Replace with your local background image file
+#sidebar_img = get_img_as_base64("sidebar.jpg")  # Replace with your local sidebar image file
+
+# Define the CSS for background images
+page_bg_img = f"""
+<style>
+
+[data-testid="stAppViewContainer"] > .main {{
+background-image: url("data:image/png;base64,{bg_img}");
+background-size: cover;
+background-position: top left;
+background-repeat: no-repeat;
+background-attachment: local;
+}}
+
+    [data-testid="stChatMessage"].st-emotion-cache-4oy321.eeusbqq4{{
+        background: white;
+        border: 1px solid black;
+    }}
+    [data-testid="stChatMessage"].st-emotion-cache-1c7y2kd.eeusbqq4{{
+        background: white;
+        border: 1px solid black;
+    }}
+    [data-testid="stBottom"] > div {{
+        background: transparent;
+    }}
+
+    
+[data-testid="stChatInput"] {{
+         background: white;
+         border: 1px solid black;
+        }}
+[data-testid="stSidebar"] {{
+background: white;
+}}
+
+[data-testid="stHeader"] {{
+background: rgba(0,0,0,0);
+}}
+
+[data-testid="stToolbar"] {{
+right: 2rem;
+}}
+
+[data-testid="stButton"]{{
+    color: #0A2081;
+}}
+
+</style>
+"""
+
+# Inject the CSS into the app
+st.markdown(page_bg_img, unsafe_allow_html=True)
+
 
 set_page_container_style(
         max_width = 1100, max_width_100_percent = True,
@@ -22,15 +85,25 @@ set_page_container_style(
 )
 
 st.markdown(hide_streamlit_header_footer(), unsafe_allow_html=True)
-st.markdown(
-    "<div style='background-color:#fee8d6;padding:0px;text-align:center;'>"
-    "<h1 style='color:black'>Indian Constitution & Amendment Acts<br> AI Chatbot</h1>"
-    ""
-    "</div>",
-    unsafe_allow_html=True
-)
+col1, col2 = st.columns([90, 10])
 
-st.markdown(f'<p style="color:white;background:teal;font-size:22px;text-align:center;text-centre:left">{"An AI assistant for querying, interpreting and understanding the Indian Constitution and Amendment Acts"}', unsafe_allow_html=True)
+with col2:
+    reset_button = st.button("Reset chat", key="reset_button", help="Click to reset the chat")
+
+# Reset the chat if the reset button is clicked
+if reset_button:
+    st.session_state.messages = []
+with col1:
+    st.markdown(
+        f'''
+        <div style="display: flex; align-items: center;">
+            <img src="data:image/png;base64,{get_img_as_base64('src/images/3.png')}" style="width: 70px; height: 70px; margin-right: 10px;">
+            <p style="color:#0A2081;font-size:30px;font-weight:bold;margin-top:0px;margin-bottom:0px;">Indian Constitution & Amendment Acts AI Chatbot</p>
+        </div>
+        ''',
+        unsafe_allow_html=True
+    )
+    st.markdown(f'<p style="color:grey;font-size:18px;text-align:center;text-centre:center">{"An AI assistant for querying the Indian Constitution and Amendment Acts"}', unsafe_allow_html=True)
 
 def about():
     st.sidebar.markdown('---')
@@ -47,13 +120,12 @@ LANGUAGE = "English"
 
 # ---- SIDEBAR START -------
 
-st.sidebar.image("src/images/indian-constitution-logo4.png", width=290)
-st.sidebar.header("Choose the output language:")
+st.sidebar.image("src/images/2.png", width=250)
+st.sidebar.markdown("<h3 style='color: #0A2081;'>Choose the output language:</h3>", unsafe_allow_html=True)
 with st.sidebar:
-    with st.container(border=True):
-        LANGUAGE = st.selectbox("options", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"],label_visibility = "collapsed")
+    LANGUAGE = st.selectbox("options", ["English", "Hindi", "Telugu","Tamil", "Marathi", "Gujarathi", "Kannada","Malayalam"],label_visibility = "collapsed")
 
-st.sidebar.header("FAQ on Indian Constitution")
+
 
 constitution_faq = [
     "What are the fundamental rights provided by the Indian Constitution?",
@@ -85,18 +157,19 @@ def display_faq(faq_list, prefix):
     for question in faq_list:
         if st.button(question, key=f"{prefix}_{question}"):
             st.session_state.faq_question = question
+st.sidebar.markdown("<h3 style='color: #0A2081;'>FAQ on Indian Constitution</h3>", unsafe_allow_html=True)
 
 with st.sidebar:
     with st.expander("FAQ on Indian Constitution", expanded=False):
         display_faq(constitution_faq, "const")
 
-st.sidebar.header("FAQ on Amendment Acts")
+st.sidebar.markdown("<h3 style='color: #0A2081;'>FAQ on Amendment Acts</h3>", unsafe_allow_html=True)
 
 with st.sidebar:
     with st.expander("FAQ on Amendment Acts", expanded=False):
         display_faq(amendment_faq, "amend")
 
-st.sidebar.header("How to use?")
+st.sidebar.markdown("<h3 style='color: #0A2081;'>How to use?</h3>", unsafe_allow_html=True)
 
 with st.sidebar:
     with st.container(border=1):
@@ -108,10 +181,11 @@ with st.sidebar:
             """
         )
 
-st.sidebar.header("About")
+st.sidebar.markdown("<h3 style='color: #0A2081;'>About</h3>", unsafe_allow_html=True)
 
 with st.sidebar:
     with st.container(border=1):
+        
         st.markdown(
             "Welcome to Indian Constitution ChatBot, an AI-powered Virtual Assistant designed to help you understand, quiz, query Indian Constitution."
         )
@@ -209,37 +283,32 @@ def generate_response(prompt):
             logging.debug(f"Processing assistant message: {message}")
             full_response = process_citations(message=message)
             st.session_state.messages.append({"role": "assistant", "content": full_response})
-            with st.chat_message("assistant", avatar="src/images/answer.png"):
+            with st.chat_message("assistant", avatar="src/images/1.png"):
                 st.markdown(full_response, unsafe_allow_html=True)
 
 # Show existing messages if any...
 with st.container():
+    
     for message in st.session_state.messages:
-        with st.chat_message(message["role"], avatar="src/images/answer.png" if message["role"] == "assistant" else "src/images/question.png"):
+        with st.chat_message(message["role"], avatar="src/images/1.png" if message["role"] == "assistant" else "src/images/chat_avatar.png"):
             st.markdown(message["content"])
 
 # Handle FAQ questions
 if st.session_state.faq_question:
     st.session_state.messages.append({"role": "user", "content": st.session_state.faq_question})
-    with st.chat_message("user", avatar="src/images/question.png"):
-        st.markdown(st.session_state.faq_question)
+    with st.chat_message("user", avatar="src/images/chat_avatar.png"):
+        st.markdown(f"<p style='color: #0A2081;'>{st.session_state.faq_question}</p>", unsafe_allow_html=True)
     generate_response(st.session_state.faq_question)
     st.session_state.faq_question = None
 
 # Handle user input
 if prompt := st.chat_input("What do you want to ask me?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="src/images/question.png"):
+    with st.chat_message("user", avatar="src/images/chat_avatar.png"):
         st.markdown(prompt)
     generate_response(prompt)
 
-# Add disclaimer at the bottom of the page
-with st.sidebar:
-    st.sidebar.markdown(
-    "<div style='background-color:#f8d7da;padding:10px;border-radius:5px;margin-top:20px;'>"
-    "<p style='color:#721c24;'>Disclaimer: This AI chatbot is for informational purposes only and should not be considered as legal advice. Always consult a legal expert for professional advice.</p>"
-    "</div>",
-    unsafe_allow_html=True
-)
+
+
 if __name__ == '__main__':
     about()
