@@ -24,59 +24,32 @@ def get_img_as_base64(file):
     return base64.b64encode(data).decode()
 
 # Encode the background and sidebar images
-bg_img = get_img_as_base64("src/images/BG.png")  # Replace with your local background image file
+# bg_img = get_img_as_base64("src/images/BG.png")  # Replace with your local background image file
 #sidebar_img = get_img_as_base64("sidebar.jpg")  # Replace with your local sidebar image file
 
 # Define the CSS for background images
-page_bg_img = f"""
-<style>
+# assign bg_img to page_bg_img
 
-[data-testid="stAppViewContainer"] > .main {{
-background-image: url("data:image/png;base64,{bg_img}");
-background-size: cover;
-background-position: top left;
-background-repeat: no-repeat;
-background-attachment: local;
-}}
-
-    [data-testid="stChatMessage"].st-emotion-cache-4oy321.eeusbqq4{{
-        background: white;
-        border: 1px solid black;
-    }}
-    [data-testid="stChatMessage"].st-emotion-cache-1c7y2kd.eeusbqq4{{
-        background: white;
-        border: 1px solid black;
-    }}
-    [data-testid="stBottom"] > div {{
-        background: transparent;
-    }}
-
-    
-[data-testid="stChatInput"] {{
-         background: white;
-         border: 1px solid black;
-        }}
-[data-testid="stSidebar"] {{
-background: white;
-}}
-
-[data-testid="stHeader"] {{
-background: rgba(0,0,0,0);
-}}
-
-[data-testid="stToolbar"] {{
-right: 2rem;
-}}
-
-[data-testid="stButton"]{{
-    color: #0A2081;
-}}
-
-</style>
-"""
+# page_bg_img = """
+# data:image/png;base64,{bg_img}// Replace with your local background image file   
+# """
 
 # Inject the CSS into the app
-st.markdown(page_bg_img, unsafe_allow_html=True)
+# st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# Function to set background from a local file
+def get_img_as_base64(file):
+    with open(file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Encode the background image
+bg_img = get_img_as_base64("src/images/BG.png")  # Replace with your local background image file
+
+# Load the CSS file and insert the background image
+with open("styles.css") as f:
+    css = f.read().replace("{bg_img}", bg_img)
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 
 set_page_container_style(
@@ -85,6 +58,7 @@ set_page_container_style(
 )
 
 st.markdown(hide_streamlit_header_footer(), unsafe_allow_html=True)
+
 col1, col2 = st.columns([90, 10])
 
 with col2:
