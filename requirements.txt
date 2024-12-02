@@ -5,3 +5,4 @@ python-dotenv
 #streamlit_float
 PyPDF2
 chromadb
+sentence_transformers
