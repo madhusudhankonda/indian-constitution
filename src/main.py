@@ -6,7 +6,7 @@ import base64
 from dotenv import load_dotenv
 from common_settings import set_page_container_style, hide_streamlit_header_footer
 from chroma_utils import ChromaDBClient
-from openai import OpenAI
+from openai import AzureOpenAI  
 
 # Set up logging for debugging
 logging.basicConfig(level=logging.ERROR)
@@ -15,8 +15,10 @@ logging.basicConfig(level=logging.ERROR)
 load_dotenv()
 
 # Initialize OpenAI
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
+client = AzureOpenAI(
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
 
 # Initialize ChromaDB client

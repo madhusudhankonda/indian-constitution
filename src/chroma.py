@@ -15,7 +15,6 @@ def split_pdf_into_chunks(pdf_path: str, chunk_size: int = 1000) -> List[tuple]:
         with open(pdf_path, 'rb') as file:
             pdf_reader = PyPDF2.PdfReader(file)
             current_chunk = ""
-            current_page = 1
             chunk_start_page = 1
             
             for page_num, page in enumerate(pdf_reader.pages, 1):
@@ -45,7 +44,7 @@ def split_pdf_into_chunks(pdf_path: str, chunk_size: int = 1000) -> List[tuple]:
                     }
                 ))
     except Exception as e:
-        logging.error(f"Error processing PDF {pdf_path}: {str(e)}")
+        logging.error("Error processing PDF %s: %s", pdf_path, str(e))
         raise
     
     return chunks
@@ -60,28 +59,28 @@ def initialize_chroma_db():
     
     # List of supported languages and their PDF files
     languages = {
-        "English": "the_ic.pdf",
-        # "Hindi": "ic-hindi.pdf",
-        # "Telugu": "ic-telugu.pdf",
-        # "Tamil": "ic-tamil.pdf",
-        # "Marathi": "ic-marathi.pdf",
-        # "Gujarati": "ic-gujarati.pdf",
-        # "Kannada": "ic-kannada.pdf",
-        # "Malayalam": "ic-malayalam.pdf"
+        "English": "indian-constitution.pdf",
+        "Hindi": "ic-hindi.pdf",
+        "Telugu": "ic-telugu.pdf",
+        "Tamil": "ic-tamil.pdf",
+        "Marathi": "ic-marathi.pdf",
+        "Gujarati": "ic-gujarati.pdf",
+        "Kannada": "ic-kannada.pdf",
+        "Malayalam": "ic-malayalam.pdf"
     }
     
     for language, pdf_file in languages.items():
         try:
-            pdf_path = os.path.join("src", "images", pdf_file)
+            pdf_path = os.path.join("data", pdf_file)
             
             if not os.path.exists(pdf_path):
-                logging.warning(f"PDF file not found: {pdf_file}")
+                logging.warning("PDF file not found: %s", pdf_file)
                 continue
             
-            logging.info(f"Processing {language} constitution...")
+            logging.info("Processing %s constitution...", language)
             
             # Create collection for language
-            collection = client.create_collection(
+            client.create_collection(
                 collection_name=f"constitution_{language.lower()}",
                 language=language
             )
@@ -90,7 +89,7 @@ def initialize_chroma_db():
             chunks = split_pdf_into_chunks(pdf_path)
             
             if not chunks:
-                logging.warning(f"No content extracted from {pdf_file}")
+                logging.warning("No content extracted from %s", pdf_file)
                 continue
             
             # Prepare data for insertion
@@ -106,10 +105,10 @@ def initialize_chroma_db():
                 ids=ids
             )
             
-            logging.info(f"Successfully initialized {language} collection with {len(chunks)} chunks")
+            logging.info("Successfully initialized %s collection with %d chunks", language, len(chunks))
             
-        except Exception as e:
-            logging.error(f"Error processing {language}: {str(e)}")
+        except (FileNotFoundError, ValueError) as e:
+            logging.error("Error processing %s: %s", language, str(e))
             continue
 
 if __name__ == "__main__":
@@ -117,4 +116,4 @@ if __name__ == "__main__":
         initialize_chroma_db()
         logging.info("ChromaDB initialization completed successfully")
     except Exception as e:
-        logging.error(f"ChromaDB initialization failed: {str(e)}")
+        logging.error("ChromaDB initialization failed: %s", str(e))
