@@ -14,13 +14,30 @@ logging.basicConfig(level=logging.ERROR)
 # Load environment variables
 load_dotenv()
 
+MODEL = "gpt-4o"
+TEMPERATURE=0.7,
+MAX_TOKENS=500
+
 # Initialize OpenAI
 client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
     api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
+LANGUAGE=""
 
+# Create prompt for OpenAI
+system_prompt = f"""You are an expert on the Indian Constitution. Answer questions in {LANGUAGE} 
+using only the following context. Include relevant citations from the context in your answer.
+
+Context:
+{{context}}
+
+Citations format:
+{{citations}}
+
+Please format your response with citations at the end, referencing specific sections and page numbers.
+"""
 # Initialize ChromaDB client
 chroma_client = ChromaDBClient(persist_directory="./chroma_db")
 
@@ -197,21 +214,8 @@ def generate_response(prompt: str, language: str) -> str:
         )
 
         # Prepare context from retrieved documents
-        context = "\n".join([doc for doc in results['documents'][0]])
-        citations = [meta for meta in results['metadatas'][0]]
-        
-        # Create prompt for OpenAI
-        system_prompt = f"""You are an expert on the Indian Constitution. Answer questions in {language} 
-        using only the following context. Include relevant citations from the context in your answer.
-        
-        Context:
-        {context}
-        
-        Citations format:
-        {citations}
-        
-        Please format your response with citations at the end, referencing specific sections and page numbers.
-        """
+        # context = "\n".join([doc for doc in results['documents'][0]])
+        # citations = [meta for meta in results['metadatas'][0]]
         
         messages = [
             {"role": "system", "content": system_prompt},
@@ -220,10 +224,9 @@ def generate_response(prompt: str, language: str) -> str:
 
         # Get response from OpenAI using the new client
         response = client.chat.completions.create(
-            model="gpt-4",
+            model=MODEL,
             messages=messages,
-            temperature=0.7,
-            max_tokens=1000
+            max_tokens=MAX_TOKENS
         )
 
         return response.choices[0].message.content
@@ -247,7 +250,10 @@ if st.session_state.faq_question:
     with st.chat_message("user", avatar="src/images/chat_avatar.png"):
         st.markdown(f"<p style='color: #0A2081;'>{st.session_state.faq_question}</p>", unsafe_allow_html=True)
     
-    response = generate_response(st.session_state.faq_question, LANGUAGE)
+    with st.spinner("Generating response..."):  # Spinner starts here
+        response = generate_response(st.session_state.faq_question, LANGUAGE)
+    # Spinner ends here
+
     st.session_state.messages.append({"role": "assistant", "content": response})
     with st.chat_message("assistant", avatar="src/images/1.png"):
         st.markdown(response, unsafe_allow_html=True)
@@ -260,7 +266,10 @@ if prompt := st.chat_input("What do you want to ask me?"):
     with st.chat_message("user", avatar="src/images/chat_avatar.png"):
         st.markdown(prompt)
     
-    response = generate_response(prompt, LANGUAGE)
+    with st.spinner("Generating response..."):  # Spinner starts here
+        response = generate_response(prompt, LANGUAGE)
+    # Spinner ends here
+
     st.session_state.messages.append({"role": "assistant", "content": response})
     with st.chat_message("assistant", avatar="src/images/1.png"):
         st.markdown(response, unsafe_allow_html=True)
