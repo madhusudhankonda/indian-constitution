@@ -36,6 +36,8 @@ Context:
 Citations format:
 {{citations}}
 
+Make sure the answers are eloborate and factually correct. 
+
 Please format your response with citations at the end, referencing specific sections and page numbers.
 """
 # Initialize ChromaDB client
